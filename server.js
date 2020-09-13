@@ -20,11 +20,12 @@ mongoose.connect(db,options).then(()=> {
     console.log(err)
 }) 
 app.use('/users',userRoutes)
-// app.get("/",(req,res)=>{
-//     res.status(200).json({
-//         message:"Hello from server"
-//     })
-// })
+
+app.get("/",(req,res)=>{
+    res.status(200).json({
+        message:"Hello from server"
+    })
+})
 const PORT =process.env.PORT ||  5000 
 
 app.listen(PORT,() => {
