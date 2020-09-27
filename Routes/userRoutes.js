@@ -7,7 +7,6 @@ const router = express.Router();
 router
   .route('/signup')
   .post(async(req,res)=>{
-     console.log(req.body)
       const {name,email,password}=req.body
       if(!name || ! email || ! password){
         return res.json({
@@ -69,6 +68,54 @@ router
             status:'fail',
             message:"USER doesn't exist"
           })
+        }else{
+            bcrypt.compare(password,account.password).then((match)=>{
+              if(match){
+                return res.json({
+                  status:'Sucess',
+                  message:'sucessfully Logged in',
+                  user:{
+                    name:account.name,
+                    email:account.email,
+                    _id:account._id
+                  }
+                })
+              }else{
+                return res.json({
+                  status:'fail',
+                  message:"Invalid Email or password"
+                })
+              }
+            }).catch((err)=>{
+            console.log(err)
+          })
+        }
+      }).catch((err)=>{
+        console.log(err)
+      })
+
+  })
+  router
+  .route('/googlesignin')
+  .post(async(req,res)=>{
+      const{ email,name,password}=req.body
+      await User.findOne({email:email}).then(async(account)=>{
+        if(!account){
+                const hashpassword =  await bcrypt.hash(password,12)
+                await User.create({ 
+                  name:name,
+                  email:email,
+                  password:hashpassword 
+                }).then((newuser)=>{
+                    return res.json({
+                    status:'sucess',
+                    message:'Register Sucessfully',
+                    user:{email,name,_id:newuser._id}
+                })
+          }).catch((err)=>{
+            console.log(err)
+          })
+          
         }else{
             bcrypt.compare(password,account.password).then((match)=>{
               if(match){
