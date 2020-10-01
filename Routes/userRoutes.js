@@ -77,7 +77,8 @@ router
                   user:{
                     name:account.name,
                     email:account.email,
-                    _id:account._id
+                    _id:account._id,
+                    rating:account.rating
                   }
                 })
               }else{
@@ -110,7 +111,8 @@ router
                     return res.json({
                     status:'sucess',
                     message:'Register Sucessfully',
-                    user:{email,name,_id:newuser._id}
+                    user:{email,name,_id:newuser._id,rating:newuser.rating}
+
                 })
           }).catch((err)=>{
             console.log(err)
@@ -125,7 +127,8 @@ router
                   user:{
                     name:account.name,
                     email:account.email,
-                    _id:account._id
+                    _id:account._id,
+                    rating:account.rating
                   }
                 })
               }else{
