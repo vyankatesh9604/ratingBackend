@@ -1,13 +1,13 @@
 const express = require('express');
 const user =require('../models/usermodel')
 const router = express.Router();
+const _ = require('loadsh')
 
 
 router
 .route('/rating')
 .patch(async(req,res)=>{
     const {_id,rating}=req.body
-    console.log(req.body)
     if(!rating.companyname || !rating.training || ! rating.environment || !rating.epf || !rating.health || !rating.teamsprit || !rating.policies){
         return res.json({
           status:'fail',
@@ -35,6 +35,30 @@ router
     //     })
   })
 
+
+})
+
+router
+.route('/ratingstore')
+.get(async(req,res)=>{
+  let store=[]
+  let finalrating={}
+  const alluser = await  user.find({},{'_id':0}).select('rating');
+  alluser.forEach((item)=>{
+    store=store.concat(item['rating'])
+  })
+  var grouped = _.mapValues(_.groupBy(store, 'companyname'),clist => clist.map(store => _.omit(store, 'companyname')))
+  Object.keys(grouped).forEach((companyname)=>{
+    let avgadd=0
+    grouped[companyname].forEach((item)=>{
+     avgadd = avgadd +((item.training + item.environment + item.health + item.teamsprit + item.policies ) / 5)
+    })
+    finalrating[companyname] =avgadd/grouped[companyname].length
+  })
+  return res.json({
+    status:'sucess',
+    companyratings:finalrating
+  })
 
 })
 module.exports = router;
